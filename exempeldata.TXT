@@ -1,0 +1,62 @@
+Insert into Konto (Mejladress, Lösenord, Notis, AdminFunktionalitet)
+values ('Diana.Jumaili@gmail.com', 'Diana', 0, 1);
+
+Insert into Konto (Mejladress, Lösenord, Notis, AdminFunktionalitet)
+values ('joabkidane@gmail.com', 'Joab', 1, 1);
+
+Insert into Konto (Mejladress, Lösenord, Notis, AdminFunktionalitet)
+values ('mike_konberg@hotmail.com', 'Mike', 1, 0);
+
+Insert into Konto (Mejladress, Lösenord, Notis, AdminFunktionalitet)
+values ('mattias.udovcic@gmail.com', 'Mattias', 0, 1);
+
+Insert into Konto (Mejladress, Lösenord, Notis, AdminFunktionalitet)
+values ('goled_95@hotmail.com', 'Goled', 0, 1);
+
+Insert into Konto (Mejladress, Lösenord, Notis, AdminFunktionalitet)
+values ('filtersome@gmail.com', 'Sam', 0, 1);
+
+Insert into Konto (Mejladress, Lösenord, Notis, AdminFunktionalitet)
+values ('suslinyacop99@gmail.com', 'Sussan', 0, 1);
+
+
+Insert into Kategori (Kategorinamn)
+values ('Forskning');
+
+Insert into Kategori (Kategorinamn)
+values ('Utbildning');
+
+Insert into Kategori (Kategorinamn)
+values ('Fritid');
+
+Insert into Kategori (Kategorinamn)
+values ('Möte');
+
+Insert into Kategori (Kategorinamn)
+values ('Humor');
+
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('Spikat','Idag har Marcus Petterson på handelshögskolan spikat! Fika finns i personalrummet', 1); 
+
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('AKUT','Akut personalmöte idag kl 14 i N456!', 1); 
+
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('Städning','Alla allmänna utrymmen ska från och med 22/03 städas två gånger om dagen på obestämd tid.', 1); 
+
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('Salstenta','Många studenter har hört av sig ang. salstentamen.
+Det är bestämt att dessa ska ställas in alt. hållas digitalt.', 2); 
+
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('karantän','Alla studenter på skolan har blivit ombedda att stanna i karantän pga covid19. 
+All utbildning ska nu bedrivas på distans.', 2);
+
+Insert into Blogginlägg (BInnehåll, Kategori)
+values ('På dagens möte har vi bestämt att all undervisning nu sker digitalt. ', 4); 
+
+Insert into Blogginlägg (BInnehåll, Kategori)
+values ('Idag går jag på mammaledighet!', 3); 
+
+Insert into Blogginlägg (BInnehåll, Kategori)
+values ('April april :)', 5);
