@@ -31,17 +31,18 @@ public class DataAccess {
         Statement st = con.createStatement();
         
         /*Spara i en tabell*/
-        ResultSet hamtaMejladresser = st.executeQuery("Select KontoID from konto where mejladress = " + 
+        ResultSet  mejladresserTabell = st.executeQuery("Select KontoID from konto where mejladress = " + 
                                                         "'" + inMejl + "'AND Lösenord = '" + inLösenord + "'");
                 
         ArrayList <String> matchID = new ArrayList();
         
-        while (hamtaMejladresser.next()){
+        while (mejladresserTabell.next()){
             match = true;
         }
         
         return match;
     }
+    
     
     public void skapaKonto(String mejladress, String losenord) throws ClassNotFoundException, SQLException{
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -49,8 +50,18 @@ public class DataAccess {
         Statement st = con.createStatement();
         st.execute("INSERT INTO KONTO (Mejladress, Lösenord, Notis, AdminFunktionalitet) VALUES"
         + "('" + mejladress + "','" + losenord + "', 1,1)");
-        
-        
     }
+    
+    public void skapaAnslag(String rubrik, String innehåll, int kategori) throws ClassNotFoundException, SQLException{
+    
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        st.execute("INSERT INTO ANSLAG (ARUBRIK, AINNEHÅLL, KATEGORI) VALUES"
+        + "('" + rubrik + "','" + innehåll + "'," + kategori + ")");
+
+    }
+    
     
 }

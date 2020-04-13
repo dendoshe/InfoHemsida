@@ -5,6 +5,11 @@
  */
 package informatikhemsida;
 
+import javax.swing.JOptionPane;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Diana Jumaili
@@ -27,22 +32,21 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        BGKategori = new javax.swing.ButtonGroup();
         lblAnslagRubrik = new javax.swing.JLabel();
         btnAnslagBifogaFil = new javax.swing.JButton();
-        cbUtbildning = new javax.swing.JCheckBox();
         btnBloggPublicera = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         TAAnslagInnehåll = new javax.swing.JTextArea();
         tfAnslagRubrik = new javax.swing.JTextField();
-        cbForskning = new javax.swing.JCheckBox();
+        rbUtbildning = new javax.swing.JRadioButton();
+        rbForskning = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lblAnslagRubrik.setText("Rubrik:");
 
         btnAnslagBifogaFil.setText("Bifoga fil/bild");
-
-        cbUtbildning.setText("Utbildning");
 
         btnBloggPublicera.setText("Publicera");
         btnBloggPublicera.addActionListener(new java.awt.event.ActionListener() {
@@ -55,26 +59,45 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
         TAAnslagInnehåll.setRows(5);
         jScrollPane2.setViewportView(TAAnslagInnehåll);
 
-        cbForskning.setText("Forskning");
+        tfAnslagRubrik.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfAnslagRubrikActionPerformed(evt);
+            }
+        });
+
+        BGKategori.add(rbUtbildning);
+        rbUtbildning.setText("Utbildning");
+        rbUtbildning.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbUtbildningActionPerformed(evt);
+            }
+        });
+
+        BGKategori.add(rbForskning);
+        rbForskning.setText("Forskning");
+        rbForskning.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbForskningActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(558, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(cbUtbildning)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbForskning))
-                        .addComponent(jScrollPane2)
-                        .addComponent(tfAnslagRubrik)
-                        .addComponent(lblAnslagRubrik, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnAnslagBifogaFil, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnBloggPublicera, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(34, 34, 34))
+                .addContainerGap(34, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblAnslagRubrik, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAnslagBifogaFil, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBloggPublicera, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2)
+                    .addComponent(tfAnslagRubrik)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(rbUtbildning)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(rbForskning)))
+                .addGap(144, 144, 144))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -83,25 +106,61 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
                 .addComponent(lblAnslagRubrik, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tfAnslagRubrik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rbUtbildning)
+                    .addComponent(rbForskning))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAnslagBifogaFil)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbUtbildning)
-                    .addComponent(cbForskning))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-                .addComponent(btnBloggPublicera, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(32, 32, 32)
+                .addComponent(btnBloggPublicera)
+                .addGap(37, 37, 37))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBloggPubliceraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBloggPubliceraActionPerformed
-        // TODO add your handling code here:
+        DataAccess access = new DataAccess();
+        
+        String rubrik = tfAnslagRubrik.getText();
+        String innehåll = TAAnslagInnehåll.getText();
+        int kategori;
+
+        if (rbForskning.isSelected()){
+            kategori = 1;
+        }
+        else if (rbUtbildning.isSelected()){
+            kategori = 2;
+        }
+        else {
+            JOptionPane.showMessageDialog(null,"Anslag tilldelades kategori: Allmänt");
+            kategori = 6;
+        }
+        
+        try {
+            access.skapaAnslag(rubrik, innehåll, kategori);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SkapaAnslagFonster.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(SkapaAnslagFonster.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_btnBloggPubliceraActionPerformed
+
+    private void tfAnslagRubrikActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfAnslagRubrikActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfAnslagRubrikActionPerformed
+
+    private void rbForskningActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbForskningActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbForskningActionPerformed
+
+    private void rbUtbildningActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbUtbildningActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbUtbildningActionPerformed
 
     /**
      * @param args the command line arguments
@@ -139,13 +198,14 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup BGKategori;
     private javax.swing.JTextArea TAAnslagInnehåll;
     private javax.swing.JButton btnAnslagBifogaFil;
     private javax.swing.JButton btnBloggPublicera;
-    private javax.swing.JCheckBox cbForskning;
-    private javax.swing.JCheckBox cbUtbildning;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblAnslagRubrik;
+    private javax.swing.JRadioButton rbForskning;
+    private javax.swing.JRadioButton rbUtbildning;
     private javax.swing.JTextField tfAnslagRubrik;
     // End of variables declaration//GEN-END:variables
 }
