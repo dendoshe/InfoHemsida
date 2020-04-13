@@ -19,7 +19,11 @@ public class ConnectionTest {
     
     
     /*För att köra detta behöver du högerklicka på klassen i menyn till höger och trycka run file*/
-     public static void main(String[] args) throws ClassNotFoundException, SQLException  {
+    
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+        test();
+}
+    public static void test () throws SQLException, ClassNotFoundException{
     
         /*detta hämtar en JDBC (Java Database Connection) interface*/
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
