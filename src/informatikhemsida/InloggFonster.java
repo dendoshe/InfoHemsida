@@ -8,6 +8,7 @@ package informatikhemsida;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -105,7 +106,12 @@ public class InloggFonster extends javax.swing.JFrame {
             new SkapaAnslagFonster().setVisible(true);
             }
             
-            else {}
+            else {
+            
+                JOptionPane.showMessageDialog(null, "Uppgifterna stämmer ej.");
+                System.out.println("Det finns ingen användare med dessa uppgifter.");
+            
+            }
         } catch (SQLException ex) {
             Logger.getLogger(InloggFonster.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
