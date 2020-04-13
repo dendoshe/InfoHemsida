@@ -20,7 +20,7 @@ public class DataAccess {
    
     boolean match;
     boolean godkant;
-    String connectionURL = "jdbc:sqlserver://localhost:53158;databaseName=Informatik;user=admin;password=team15";
+    String connectionURL = "jdbc:sqlserver://localhost:53158;databaseName=InfoHemsida;user=admin;password=team15";
     Connection con;
     
     public boolean verifieraInlogg(String inMejl, String inLösenord) throws SQLException, ClassNotFoundException{
@@ -30,18 +30,47 @@ public class DataAccess {
         /*Klass för att göra en sql string exekverbar*/
         Statement st = con.createStatement();
         
-        /*Spara i en tabell*/
-        ResultSet hamtaMejladresser = st.executeQuery("Select KontoID from konto where mejladress = " + 
+        /*Spara alla användare i en tabell*/
+        ResultSet mejladresser = st.executeQuery("Select KontoID from konto where mejladress = " + 
                                                         "'" + inMejl + "'AND Lösenord = '" + inLösenord + "'");
                 
+        
+        
         ArrayList <String> matchID = new ArrayList();
         
-        while (hamtaMejladresser.next()){
+        while (mejladresser.next()){
             match = true;
         }
         
         return match;
     }
+    
+    public boolean verifieraAdmin(String inMejl) throws SQLException, ClassNotFoundException{
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        
+        /*Klass för att göra en sql string exekverbar*/
+        Statement st = con.createStatement();
+        
+        /*Spara admins i en tabell*/
+        ResultSet admins = st.executeQuery("Select KontoID, MejlAdress from konto where AdminFunktionalitet = 1");
+        
+        while (admins.next()){
+            
+            /*hämta string av andra kolumnen och jämför med inmatad mejl*/
+            if(admins.getString(2) == inMejl){
+                
+            match = true;
+            }
+            
+            else {
+            match = false;
+            }
+        }
+        
+        return match;
+    }
+        
     
     public void skapaKonto(String mejladress, String losenord) throws ClassNotFoundException, SQLException{
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -51,6 +80,12 @@ public class DataAccess {
         + "('" + mejladress + "','" + losenord + "', 1,1)");
         
         
+    }
+    
+    public void skapaAnslag(){
+    
+    
+    
     }
     
 

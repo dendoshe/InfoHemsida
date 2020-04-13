@@ -77,16 +77,15 @@ public class InloggFonster extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(110, 110, 110)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnLoggaIn)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lbMejl)
-                                    .addComponent(tfMejl, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(43, 43, 43)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(tfLosenord, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbLosenord)))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbMejl)
+                            .addComponent(tfMejl, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(43, 43, 43)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(tfLosenord, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lbLosenord))
+                            .addComponent(btnLoggaIn, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -117,16 +116,22 @@ public class InloggFonster extends javax.swing.JFrame {
       
         
         try {
-            if (access.verifieraInlogg(tfMejl.getText(), tfLosenord.getText()) == true)
+            
+            if(access.verifieraInlogg(tfMejl.getText(), tfLosenord.getText()) == true && access.verifieraAdmin(tfMejl.getText()) == true){
+                
+            System.out.println("ADMIN");
+            this.setVisible(false);
+            new AdminFonster().setVisible(true);
+            }
+            
+            else if (access.verifieraInlogg(tfMejl.getText(), tfLosenord.getText()) == true && access.verifieraAdmin(tfMejl.getText()) == false)
             {System.out.println("Uppgifterna stämmer.");
+            this.setVisible(false);
             new SkapaAnslagFonster().setVisible(true);
             }
             
             else {
-            
                 JOptionPane.showMessageDialog(null, "Uppgifterna stämmer ej.");
-                System.out.println("Det finns ingen användare med dessa uppgifter.");
-            
             }
         } catch (SQLException ex) {
             Logger.getLogger(InloggFonster.class.getName()).log(Level.SEVERE, null, ex);
