@@ -20,7 +20,7 @@ public class DataAccess {
    
     boolean match;
     boolean godkant;
-    String connectionURL = "jdbc:sqlserver://localhost:53158;databaseName=Informatik;user=admin;password=team15";
+    String connectionURL = "jdbc:sqlserver://localhost:1434;databaseName=Informatik;user=admin;password=team15";
     Connection con;
     
     public boolean verifieraInlogg(String inMejl, String inLösenord) throws SQLException, ClassNotFoundException{
