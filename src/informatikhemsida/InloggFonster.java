@@ -13,13 +13,16 @@ import java.util.logging.Logger;
  *
  * @author Diana Jumaili
  */
-public class LoginFonster extends javax.swing.JFrame {
+public class InloggFonster extends javax.swing.JFrame {
+
+    /**
+     * Creates new form InloggFonster
+     */
     
-    HamtaData kontroll = new HamtaData();
-
-    public LoginFonster() {
+    DataAccess access = new DataAccess();
+    
+    public InloggFonster() {
         initComponents();
-
     }
 
     /**
@@ -31,14 +34,12 @@ public class LoginFonster extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        tfMejl = new javax.swing.JTextField();
         btnLoggaIn = new javax.swing.JButton();
-        lblError = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        tfMejl = new javax.swing.JTextField();
+        tfLosenord = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        tfMejl.setText("jTextField1");
 
         btnLoggaIn.setText("jButton1");
         btnLoggaIn.addActionListener(new java.awt.event.ActionListener() {
@@ -47,10 +48,14 @@ public class LoginFonster extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Ny på jobbet?");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        tfMejl.setText("jTextField1");
+
+        tfLosenord.setText("jTextField2");
+
+        jButton1.setText("Ny på jobbet?");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -59,57 +64,60 @@ public class LoginFonster extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(143, 143, 143)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblError)
-                        .addGap(83, 83, 83)
-                        .addComponent(btnLoggaIn))
-                    .addComponent(tfMejl, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(371, Short.MAX_VALUE))
+                .addGap(81, 81, 81)
+                .addComponent(tfMejl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addComponent(tfLosenord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(73, 73, 73))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addGap(56, 56, 56))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnLoggaIn)
+                        .addGap(85, 85, 85))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(8, 8, 8)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfMejl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfLosenord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(31, 31, 31)
-                .addComponent(jButton2)
-                .addGap(47, 47, 47)
-                .addComponent(tfMejl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnLoggaIn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblError)
-                .addContainerGap(166, Short.MAX_VALUE))
+                .addGap(98, 98, 98))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLoggaInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoggaInActionPerformed
-    
+      
+        
         try {
-           
-            if (kontroll.check(tfMejl.getText()) == true)
-            {System.out.println("match!"); } 
-            else {
-                lblError.setText("Mejladdressen hittades ej.");
+            if (access.verifieraInlogg(tfMejl.getText(), tfLosenord.getText()) == true)
+            {System.out.println("Uppgifterna stämmer.");
+            new SkapaAnslagFonster().setVisible(true);
             }
             
-        } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(LoginFonster.class.getName()).log(Level.SEVERE, null, ex);
+            else {}
+        } catch (SQLException ex) {
+            Logger.getLogger(InloggFonster.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(InloggFonster.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnLoggaInActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-       
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+                
         new SkapaKontoFonster().setVisible(true);
-        
-        
-    }//GEN-LAST:event_jButton2ActionPerformed
+
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -128,28 +136,28 @@ public class LoginFonster extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LoginFonster.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InloggFonster.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LoginFonster.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InloggFonster.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LoginFonster.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InloggFonster.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LoginFonster.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InloggFonster.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LoginFonster().setVisible(true);
+                new InloggFonster().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLoggaIn;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel lblError;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JTextField tfLosenord;
     private javax.swing.JTextField tfMejl;
     // End of variables declaration//GEN-END:variables
 }
