@@ -35,21 +35,21 @@ values ('Möte');
 Insert into Kategori (Kategorinamn)
 values ('Humor');
 
-Insert into Anslag (AInnehåll, Kategori)
-values ('Idag har Marcus Petterson på handelshögskolan spikat! Fika finns i personalrummet', 1); 
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('Spikat','Idag har Marcus Petterson på handelshögskolan spikat! Fika finns i personalrummet', 1); 
 
-Insert into Anslag (AInnehåll, Kategori)
-values ('Akut personalmöte idag kl 14 i N456!', 1); 
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('AKUT','Akut personalmöte idag kl 14 i N456!', 1); 
 
-Insert into Anslag (AInnehåll, Kategori)
-values ('Alla allmänna utrymmen ska från och med 22/03 städas två gånger om dagen på obestämd tid.', 1); 
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('Städning','Alla allmänna utrymmen ska från och med 22/03 städas två gånger om dagen på obestämd tid.', 1); 
 
-Insert into Anslag (AInnehåll, Kategori)
-values ('Många studenter har hört av sig ang. salstentamen.
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('Salstenta','Många studenter har hört av sig ang. salstentamen.
 Det är bestämt att dessa ska ställas in alt. hållas digitalt.', 2); 
 
-Insert into Anslag (AInnehåll, Kategori)
-values ('Alla studenter på skolan har blivit ombedda att stanna i karantän pga covid19. 
+Insert into Anslag (ARubrik, AInnehåll, Kategori)
+values ('karantän','Alla studenter på skolan har blivit ombedda att stanna i karantän pga covid19. 
 All utbildning ska nu bedrivas på distans.', 2);
 
 Insert into Blogginlägg (BInnehåll, Kategori)
@@ -59,4 +59,4 @@ Insert into Blogginlägg (BInnehåll, Kategori)
 values ('Idag går jag på mammaledighet!', 3); 
 
 Insert into Blogginlägg (BInnehåll, Kategori)
-values ('April april :)', 5); 
+values ('April april :)', 5);

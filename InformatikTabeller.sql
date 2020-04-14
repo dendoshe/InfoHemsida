@@ -1,7 +1,7 @@
 Create table Konto (
 KontoID int identity primary key not null, 
-Mejladress Nvarchar(50) unique not null, 
-Lösenord Nvarchar(50) not null,
+Mejladress Nvarchar(100) unique not null, 
+Lösenord Nvarchar(100) not null,
 Notis bit,
 AdminFunktionalitet bit
 );
@@ -9,12 +9,12 @@ AdminFunktionalitet bit
 
 Create table Kategori (
 KategoriID int identity primary key not null,
-Kategorinamn varchar(20)
+Kategorinamn varchar(100)
 );
 
 Create table Blogginlägg (
 InläggID int identity primary key not null,
-Rubrik nvarchar(40),
+Rubrik nvarchar(100),
 BInnehåll text, 
 Kategori int,
 foreign key (Kategori) References Kategori(KategoriID)
@@ -32,6 +32,7 @@ foreign key (Deltagare) references Konto(KontoID)
 
 Create table Anslag (
 AnslagID int identity primary key not null, 
+ARubrik nvarchar(100),
 AInnehåll text,
 Kategori int,
 foreign key (Kategori) references Kategori(KategoriID)
@@ -60,3 +61,5 @@ Mötesledare int,
 foreign key (Möte) references Möte(MötesID),
 foreign key (Mötesledare) references Konto(KontoID)
 );
+
+
