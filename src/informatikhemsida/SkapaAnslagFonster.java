@@ -5,6 +5,7 @@
  */
 package informatikhemsida;
 
+import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,15 +25,14 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
     Map<Object, Object> anslag = new HashMap<>();
     File selectedFile = null;
     int selectedCategory;
-    
+
     /**
      * Creates new form skapaAnslag2
      */
     public SkapaAnslagFonster() {
         initComponents();
-        //getKategorier(); SQL
+        header.requestFocus();
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,10 +44,9 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
     private void initComponents() {
 
         kategori = new javax.swing.ButtonGroup();
-        lblAnslagRubrik = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        textArea = new javax.swing.JTextArea();
-        header = new javax.swing.JTextField();
+        textArea = new javax.swing.JTextArea("Skriv nåt fint");
+        header = new javax.swing.JTextField(" Rubrik");
         addFile = new java.awt.Button();
         publishBtn = new java.awt.Button();
         attachmentLbl = new java.awt.Label();
@@ -55,14 +54,32 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
         forskningBtn = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        lblAnslagRubrik.setText("Rubrik:");
+        setTitle("Skapa anslag");
 
         textArea.setColumns(20);
         textArea.setRows(5);
+        textArea.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        textArea.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                textAreaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                textAreaFocusLost(evt);
+            }
+        });
         jScrollPane2.setViewportView(textArea);
 
-        addFile.setLabel("Lägg till bilaga");
+        header.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        header.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                headerFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                headerFocusLost(evt);
+            }
+        });
+
+        addFile.setLabel("📎");
         addFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addFileActionPerformed(evt);
@@ -96,23 +113,22 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblAnslagRubrik, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 173, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(header)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(forskningBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(utbildningBtn))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(addFile, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(attachmentLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(attachmentLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(publishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(header))
+                        .addComponent(publishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -120,19 +136,15 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblAnslagRubrik, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(utbildningBtn)
-                    .addComponent(forskningBtn))
+                    .addComponent(header, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(forskningBtn)
+                    .addComponent(utbildningBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(header, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(addFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(attachmentLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(attachmentLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(publishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -148,7 +160,7 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
         if (alt == JFileChooser.APPROVE_OPTION) {
             selectedFile = fc.getSelectedFile();
             attachmentLbl.setText("" + selectedFile.getName());
-        } else if (alt == JFileChooser.CANCEL_OPTION){
+        } else if (alt == JFileChooser.CANCEL_OPTION) {
             System.out.println("User cancelled file selection");
         }
     }//GEN-LAST:event_addFileActionPerformed
@@ -156,7 +168,7 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
     private void publishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_publishBtnActionPerformed
         anslag.put("AInnehåll", textArea.getText());
         anslag.put("Kategori", selectedCategory);
-        anslag.put("Rubrik", header.getText());
+        anslag.put(" Rubrik", header.getText());
         anslag.put("Fil", selectedFile);
         this.dispose(); //stänger fönstret
         DataAccess da = new DataAccess("Milky", "milkmaster");
@@ -165,11 +177,37 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
 
     private void forskningBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forskningBtnActionPerformed
         selectedCategory = 1;
+        this.getContentPane().setBackground(new Color(168, 149, 87));
     }//GEN-LAST:event_forskningBtnActionPerformed
 
     private void utbildningBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_utbildningBtnActionPerformed
         selectedCategory = 2;
+        this.getContentPane().setBackground(new Color(176, 142, 148));
     }//GEN-LAST:event_utbildningBtnActionPerformed
+
+    private void headerFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_headerFocusGained
+        if (header.getText().equals(" Rubrik")) {
+            header.setText("");
+        }
+    }//GEN-LAST:event_headerFocusGained
+
+    private void headerFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_headerFocusLost
+        if (header.getText().isEmpty()) {
+            header.setText(" Rubrik");
+        }
+    }//GEN-LAST:event_headerFocusLost
+
+    private void textAreaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textAreaFocusGained
+        if (textArea.getText().equals("Skriv nåt fint")) {
+            textArea.setText("");
+        }
+    }//GEN-LAST:event_textAreaFocusGained
+
+    private void textAreaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textAreaFocusLost
+        if (textArea.getText().isEmpty()) {
+            textArea.setText("Skriv nåt fint");
+        }
+    }//GEN-LAST:event_textAreaFocusLost
 
     /**
      * @param args the command line arguments
@@ -213,7 +251,6 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
     private javax.swing.JTextField header;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.ButtonGroup kategori;
-    private javax.swing.JLabel lblAnslagRubrik;
     private java.awt.Button publishBtn;
     private javax.swing.JTextArea textArea;
     private javax.swing.JRadioButton utbildningBtn;
