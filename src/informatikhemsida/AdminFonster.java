@@ -5,6 +5,11 @@
  */
 package informatikhemsida;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Diana Jumaili
@@ -14,6 +19,9 @@ public class AdminFonster extends javax.swing.JFrame {
     /**
      * Creates new form AdminFonster
      */
+    
+    DataAccess access = new DataAccess();
+    
     public AdminFonster() {
         initComponents();
     }
@@ -27,21 +35,98 @@ public class AdminFonster extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        tfAdmin = new javax.swing.JTextField();
+        btLaggTillAdmin = new javax.swing.JButton();
+        btnTabortAdmin = new javax.swing.JButton();
+        lbAdminMejladdress = new javax.swing.JLabel();
+        btAdminStang = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        btLaggTillAdmin.setText("Gör till admin");
+        btLaggTillAdmin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btLaggTillAdminActionPerformed(evt);
+            }
+        });
+
+        btnTabortAdmin.setText("Ta bort som admin");
+        btnTabortAdmin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTabortAdminActionPerformed(evt);
+            }
+        });
+
+        lbAdminMejladdress.setText("Mejladress:");
+
+        btAdminStang.setText("Stäng");
+        btAdminStang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAdminStangActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(tfAdmin)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(btLaggTillAdmin)
+                            .addGap(35, 35, 35)
+                            .addComponent(btnTabortAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(lbAdminMejladdress))
+                .addContainerGap(36, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btAdminStang)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(lbAdminMejladdress)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tfAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btLaggTillAdmin)
+                    .addComponent(btnTabortAdmin))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
+                .addComponent(btAdminStang, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btLaggTillAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLaggTillAdminActionPerformed
+        try {
+            access.tilldelaAdmin(tfAdmin.getText());
+            JOptionPane.showMessageDialog(null, tfAdmin.getText()+ " är nu admin.");
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(AdminFonster.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btLaggTillAdminActionPerformed
+
+    private void btnTabortAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTabortAdminActionPerformed
+        try {
+            access.taBortAdmin(tfAdmin.getText());
+            JOptionPane.showMessageDialog(null, tfAdmin.getText()+ " är inte längre admin.");
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(AdminFonster.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnTabortAdminActionPerformed
+
+    private void btAdminStangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdminStangActionPerformed
+        this.setVisible(false);
+        new InloggFonster().setVisible(true);
+    }//GEN-LAST:event_btAdminStangActionPerformed
 
     /**
      * @param args the command line arguments
@@ -79,5 +164,10 @@ public class AdminFonster extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btAdminStang;
+    private javax.swing.JButton btLaggTillAdmin;
+    private javax.swing.JButton btnTabortAdmin;
+    private javax.swing.JLabel lbAdminMejladdress;
+    private javax.swing.JTextField tfAdmin;
     // End of variables declaration//GEN-END:variables
 }

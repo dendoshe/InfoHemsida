@@ -33,7 +33,6 @@ public class DataAccess {
         /*Spara alla användare som matchar värdena i en tabell*/
         ResultSet mejladresser = st.executeQuery("Select KontoID from konto where mejladress = " + 
                                                         "'" + inMejl + "'AND Lösenord = '" + inLösenord + "'");
-        ArrayList <String> matchID = new ArrayList();
         
         /*Om loopen har ngt att iterera över*/
         while (mejladresser.next()){
@@ -69,9 +68,27 @@ public class DataAccess {
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
         st.execute("INSERT INTO KONTO (Mejladress, Lösenord, Notis, AdminFunktionalitet) VALUES"
-        + "('" + mejladress + "','" + losenord + "', 1,1)");
+        + "('" + mejladress + "','" + losenord + "', 1,0)");
         
         
+    }
+    
+    
+    public void tilldelaAdmin(String inMejl) throws ClassNotFoundException, SQLException{
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        st.execute("Update Konto set AdminFunktionalitet = 1 where Mejladress = '" + inMejl + "'");
+    }
+    
+    public void taBortAdmin(String inMejl) throws ClassNotFoundException, SQLException{
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        st.execute("Update Konto set AdminFunktionalitet = 0 where Mejladress = '" + inMejl + "'");
+    
     }
     
     public void skapaAnslag(){
