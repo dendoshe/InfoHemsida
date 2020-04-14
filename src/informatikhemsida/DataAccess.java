@@ -30,18 +30,16 @@ public class DataAccess {
         /*Klass för att göra en sql string exekverbar*/
         Statement st = con.createStatement();
         
-        /*Spara alla användare i en tabell*/
+        /*Spara alla användare som matchar värdena i en tabell*/
         ResultSet mejladresser = st.executeQuery("Select KontoID from konto where mejladress = " + 
                                                         "'" + inMejl + "'AND Lösenord = '" + inLösenord + "'");
-                
-        
-        
         ArrayList <String> matchID = new ArrayList();
         
+        /*Om loopen har ngt att iterera över*/
         while (mejladresser.next()){
             match = true;
         }
-        
+
         return match;
     }
     
@@ -53,22 +51,16 @@ public class DataAccess {
         Statement st = con.createStatement();
         
         /*Spara admins i en tabell*/
-        ResultSet admins = st.executeQuery("Select KontoID, MejlAdress from konto where AdminFunktionalitet = 1");
+        ResultSet admins = st.executeQuery("Select KontoID, MejlAdress from konto where AdminFunktionalitet = 1 AND MejlAdress = '" + inMejl + "'");
         
-        while (admins.next()){
-            
-            /*hämta string av andra kolumnen och jämför med inmatad mejl*/
-            if(admins.getString(2) == inMejl){
-                
-            match = true;
-            }
-            
-            else {
-            match = false;
-            }
-        }
+        match = false;
         
-        return match;
+       while(admins.next()){
+
+           match = true;
+       }
+       
+       return match;
     }
         
     
