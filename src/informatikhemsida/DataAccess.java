@@ -125,6 +125,46 @@ public class DataAccess {
     
     }
     
+    public void laggUppAnslag(Map<Object, Object> anslag) {
+        String header = anslag.get("Rubrik").toString();
+        String body = anslag.get("AInnehåll").toString();
+        int category = (int) anslag.get("Kategori");
+        File file = (File) anslag.get("Fil");
+
+        try {
+            ps = con.prepareStatement(insertAnslag);
+
+            ps.setString(1, body);
+            ps.setInt(2, category);
+
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } finally { //stänger ps och connection för att undvika memory leakage
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+    
+        public void bjudInDeltagareTillMöte(String möte, String deltagare) throws ClassNotFoundException, SQLException 
+    {
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        st.execute("insert into komö (möte,deltagare) values (" + möte + "," + deltagare + ")");
+    }
+    
 
         
         

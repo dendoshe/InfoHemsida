@@ -129,5 +129,12 @@ foreign key (Möte) references Möte(MötesID),
 foreign key (Mötesledare) references Konto(KontoID)
 );
 
+Create table KoMö (
+Int möte,
+Int deltagare,
+Foreign key (möte) references möte(mötesID),
+Foreign key (deltagare) references konto(kontoID)
+);
+
 
 >>>>>>> origin/master
