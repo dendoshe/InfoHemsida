@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextField;
 import java.sql.Blob;
+import java.awt.Desktop;
 
 public class DataAccess {
 
@@ -44,9 +45,7 @@ public class DataAccess {
 
     String insertAnslag = "INSERT INTO Anslag (AInnehåll, Kategori) VALUES (?, ?)";
     String fileUpload = "insert into Anslag(Filnamn, Fil, Filformat) values ( ?, ?, ?)";
-    String getFile = "SELECT Fil, Filformat FROM Anslag WHERE Fil IS NOT NULL AND Filformat IS NOT NULL";
-
-    private static final int BUFFER_SIZE = 4096; // 4KB
+    String getFile = "SELECT Fil, Filformat FROM Anslag WHERE Fil IS NOT NULL AND Filformat IS NOT NULL AND AnslagID = ?";
 
     /*
      * 1. Skapa ett nytt DataAccess object med dina inloggningsuppgifter: DataAccess
@@ -214,63 +213,58 @@ public class DataAccess {
 
     }
 
-    public void hamtaFil(int AnslagID) {
+    /*
+     * Hämtar fil, med anslagID, till klientens temporary files
+     *
+     * Returnerar fil
+     */
+    public File hamtaFil(int anslagID) {
+        
+        // Skapa ny fil för att skriva i
+        File file = null;
+
         try {
             this.con = DriverManager.getConnection(connectionURL);
-            ps = con.prepareStatement(getFile);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Blob blob = rs.getBlob(1);
-                String fileExtension = rs.getString("Filformat");
-                File file;
-                try {
-                    InputStream in = blob.getBinaryStream();
-                    file = File.createTempFile("GenericFile-", fileExtension,
-                            new File(System.getProperty("java.io.tmpdir")));
-                    OutputStream out = new FileOutputStream(file);
-                    byte[] buff = new byte[4096]; // how much of the blob to read/write at a time
-                    int len = 0;
 
+            // SQL-kommando getFile, deklareras globalt i klassen längre upp
+            ps = con.prepareStatement(getFile);
+
+            // Hämta fil beroende på anslagsID
+            ps.setInt(1, anslagID);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // Spara binärdata
+                Blob blob = rs.getBlob(1);
+
+                // Spara filformat
+                String fileExtension = rs.getString("Filformat");
+                System.out.println(fileExtension);
+
+                try {
+                    // Öppna fil
+                    InputStream in = blob.getBinaryStream();
+
+                    // Gör filen till temporär fil i användarens temporary files mapp, och döper
+                    // den utefter anslagsID
+                    file = File.createTempFile("GenericFile" + anslagID + "-", fileExtension,
+                            new File(System.getProperty("java.io.tmpdir")));
+
+                    // Skriv data i den nya filen utifrån binärdatan som hämtats från databasen
+                    OutputStream out = new FileOutputStream(file);
+
+                    // Hur många bits som skrivs per iteration (4kB)
+                    byte[] buff = new byte[4096];
+                    int len = 0;
                     while ((len = in.read(buff)) != -1) {
                         out.write(buff, 0, len);
                     }
-
+                    // Stäng fil
                     out.close();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
-            int[] pngSignature = { 137, 80, 78, 71, 13, 10, 26, 10 };
-
-            // Path path =
-            // Paths.get("%USERPROFILE%/AppData/Local/Temp/Skolapp/GenericFile");
-
-            // Files.createDirectories(path.getParent());
-
-            // try {
-            // Files.createFile(path);
-            // } catch (FileAlreadyExistsException e) {
-            // System.err.println("already exists: " + e.getMessage());
-            // }
-
-            // try (InputStream inputStream = new
-            // FileInputStream("%USERPROFILE%/AppData/Local/Temp/GenericFile");
-            // OutputStream outputStream = new FileOutputStream(outputFile);) {
-
-            // byte[] buffer = new byte[BUFFER_SIZE];
-            // byte[] contentInBytes = inputFile.getBytes();
-
-            // while (inputStream.read(buffer) != -1) {
-            // outputStream.write(buffer);
-            // }
-
-            // outputStream.flush();
-            // outputStream.close();
-
-            // } catch (IOException ex) {
-            // ex.printStackTrace();
-            // }
 
         } catch (SQLException ex) {
             Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
@@ -287,7 +281,23 @@ public class DataAccess {
                 Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        oppnaFil(file);
+        return file;
+    }
 
+    /*
+     * Öppnar en fil (file) med klientens förvalda applikation
+     */
+    public void oppnaFil(File file) {
+        Desktop desktop = Desktop.getDesktop();
+        if (file.exists()) {
+            try {
+                desktop.open(file);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 
     public void bjudInDeltagareTillMöte(String möte, String deltagare) throws ClassNotFoundException, SQLException {

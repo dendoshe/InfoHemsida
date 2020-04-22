@@ -173,7 +173,6 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
         this.dispose(); //stänger fönstret
         DataAccess da = new DataAccess("Milky", "milkmaster");
         da.laggUppAnslag(anslag);
-        da.hamtaFil(1);
     }//GEN-LAST:event_publishBtnActionPerformed
 
     private void forskningBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forskningBtnActionPerformed
