@@ -20,7 +20,7 @@ public class AdminFonster extends javax.swing.JFrame {
      * Creates new form AdminFonster
      */
     
-    DataAccess access = new DataAccess();
+    DataAccess access = new DataAccess("Milky", "milkmaster");
     
     public AdminFonster() {
         initComponents();

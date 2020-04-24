@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,8 +45,13 @@ public class DataAccess {
     PreparedStatement fps = null;
 
     String insertAnslag = "INSERT INTO Anslag (AInnehåll, Kategori) VALUES (?, ?)";
-    String fileUpload = "insert into Anslag(Filnamn, Fil, Filformat) values ( ?, ?, ?)";
+    String fileUpload = "UPDATE Anslag SET Filnamn = ?, Fil = ?, Filformat = ? WHERE AnslagID = ?";
     String getFile = "SELECT Fil, Filformat FROM Anslag WHERE Fil IS NOT NULL AND Filformat IS NOT NULL AND AnslagID = ?";
+    String getAdminStatus = "SELECT AdminFunktionalitet FROM Konto WHERE Mejladress = ?";
+    String taBortAnslag = "DELETE FROM Anslag WHERE AnslagID = ?";
+
+    // Sparar adminstatus vid inloggning
+    int admin;
 
     /*
      * 1. Skapa ett nytt DataAccess object med dina inloggningsuppgifter: DataAccess
@@ -64,7 +70,7 @@ public class DataAccess {
     }
 
     public boolean verifieraInlogg(String inMejl, String inLösenord) throws SQLException, ClassNotFoundException {
-        connectionURL = "jdbc:sqlserver://localhost:53158;databaseName=Informatik;user=admin;password=team15";
+        connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=Informatik;user=Milky;password=milkmaster";
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
 
@@ -80,6 +86,14 @@ public class DataAccess {
         while (hamtaMejladresser.next()) {
             match = true;
         }
+
+        ps = con.prepareStatement(getAdminStatus);
+        ps.setString(1, inMejl);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            admin = rs.getInt("AdminFunktionalitet");
+        }
+        System.out.println("Adminstatus: " + admin);
 
         return match;
     }
@@ -141,13 +155,22 @@ public class DataAccess {
         String body = anslag.get("AInnehåll").toString();
         int category = (int) anslag.get("Kategori");
         File file = (File) anslag.get("Fil");
+        BigDecimal anslagID = null;
 
         try {
-            ps = con.prepareStatement(insertAnslag);
+            //"new String[]{"AnslagID"} gör så man kan returnera primärnyckel i samma SQL-fråga
+            ps = con.prepareStatement(insertAnslag, new String[]{"AnslagID"});
             ps.setString(1, body);
             ps.setInt(2, category);
             ps.executeUpdate();
-            laddaUppFil(file);
+
+            //Hämta primärnyckel av det som precis exekverades i SQL
+            ResultSet rs = ps.getGeneratedKeys();
+            while (rs.next()){
+                anslagID = (BigDecimal) rs.getObject(1);
+            }
+
+            laddaUppFil(file, anslagID);
 
         } catch (SQLException ex) {
             Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
@@ -167,7 +190,32 @@ public class DataAccess {
 
     }
 
-    public void laddaUppFil(File file) {
+    /*
+    * Tar bort anslag med angivet anslagID
+    */
+    public void taBortAnslag (int anslagID){
+        try {
+            ps = con.prepareStatement(taBortAnslag);
+            ps.setInt(1, anslagID);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } finally { // stänger ps och connection för att undvika memory leakage
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void laddaUppFil(File file, BigDecimal anslagID) {
 
         try {
             this.con = DriverManager.getConnection(connectionURL);
@@ -189,12 +237,13 @@ public class DataAccess {
             System.out.println(s);
             String filename = s.substring(s.lastIndexOf("\\"));
             String extension = filename.substring(filename.indexOf("."));
-            System.out.println(extension); // parameter 3 not set
             fps.setString(3, extension);
+
+            fps.setBigDecimal(4, anslagID);
 
             // Exekvera SQL-kommandot
             fps.executeUpdate();
-
+            
         } catch (SQLException ex) {
             Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println(ex.getMessage());
@@ -219,7 +268,7 @@ public class DataAccess {
      * Returnerar fil
      */
     public File hamtaFil(int anslagID) {
-        
+
         // Skapa ny fil för att skriva i
         File file = null;
 
