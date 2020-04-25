@@ -21,7 +21,7 @@ public class StartsidaFonster extends javax.swing.JFrame {
     public StartsidaFonster() {
         initComponents();
         
-        DataAccess access = new DataAccess();
+        DataAccess access = new DataAccess("admin","team15");
 
     }
 

@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/devGoled
 Create table Konto (
 KontoID int identity primary key not null, 
 Mejladress Nvarchar(100) unique not null, 
@@ -64,6 +67,7 @@ foreign key (Mötesledare) references Konto(KontoID)
 );
 
 
+<<<<<<< HEAD
 =======
 Create table Konto (
 KontoID int identity primary key not null, 
@@ -138,3 +142,5 @@ Foreign key (deltagare) references konto(kontoID)
 
 
 >>>>>>> origin/master
+=======
+>>>>>>> origin/devGoled

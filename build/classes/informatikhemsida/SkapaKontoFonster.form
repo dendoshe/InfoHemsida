@@ -23,6 +23,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
+<<<<<<< HEAD
           <Group type="102" attributes="0">
               <EmptySpace pref="142" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -48,6 +49,25 @@
                       <EmptySpace min="-2" pref="134" max="-2" attributes="0"/>
                   </Group>
               </Group>
+=======
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="tfNyMejl" alignment="0" min="-2" pref="115" max="-2" attributes="0"/>
+                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                  <Component id="tfNyLosenord" min="-2" pref="115" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="143" max="32767" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
+>>>>>>> origin/devGoled
           </Group>
       </Group>
     </DimensionLayout>
@@ -55,23 +75,32 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
 <<<<<<< HEAD
+<<<<<<< HEAD
               <EmptySpace pref="61" max="32767" attributes="0"/>
 =======
               <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
 >>>>>>> origin/master
+=======
+              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+>>>>>>> origin/devGoled
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
 <<<<<<< HEAD
+<<<<<<< HEAD
               <EmptySpace type="separate" max="-2" attributes="0"/>
 =======
               <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
 >>>>>>> origin/master
+=======
+              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+>>>>>>> origin/devGoled
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="tfNyMejl" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="tfNyLosenord" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
+<<<<<<< HEAD
 <<<<<<< HEAD
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jButton1" min="-2" max="-2" attributes="0"/>
@@ -83,6 +112,11 @@
               <Component id="jButton1" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="36" max="32767" attributes="0"/>
 >>>>>>> origin/master
+=======
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="36" max="32767" attributes="0"/>
+>>>>>>> origin/devGoled
           </Group>
       </Group>
     </DimensionLayout>
@@ -97,11 +131,14 @@
         <Property name="text" type="java.lang.String" value="Skapa konto"/>
       </Properties>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
       </Events>
 =======
 >>>>>>> origin/master
+=======
+>>>>>>> origin/devGoled
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
@@ -114,6 +151,7 @@
       </Properties>
     </Component>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <Component class="javax.swing.JButton" name="btSkapaAnslagStang">
       <Properties>
         <Property name="text" type="java.lang.String" value="St&#xe4;ng"/>
@@ -124,5 +162,7 @@
     </Component>
 =======
 >>>>>>> origin/master
+=======
+>>>>>>> origin/devGoled
   </SubComponents>
 </Form>
