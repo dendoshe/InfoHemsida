@@ -37,6 +37,7 @@ public class möten extends javax.swing.JFrame {
     /** Creates new form möten */
     public möten() throws ClassNotFoundException, SQLException {
         initComponents();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         ArrayList<String> datum = access.hamtaMote();
 //        cbe.setModel(new DefaultComboBoxModel<String> (datum.toArray(new String [0]))); ComboBox
         

@@ -38,6 +38,7 @@ public class VisaSchema extends javax.swing.JFrame {
      */
     public VisaSchema() throws SQLException, ClassNotFoundException {
         initComponents();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         ArrayList<String> datum = access.hamtaMoteDatum();
         cbe.setModel(new DefaultComboBoxModel<String> (datum.toArray(new String [2])));
         //hamtaDatumen();
