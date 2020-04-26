@@ -26,6 +26,9 @@ public class BloggFonster extends javax.swing.JFrame {
     
     public BloggFonster() throws ClassNotFoundException, SQLException {
         initComponents();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setLocationRelativeTo(null);
+        //setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
         cbValdKategori.removeAllItems();
         

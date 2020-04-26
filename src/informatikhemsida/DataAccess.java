@@ -37,6 +37,7 @@ public class DataAccess {
 
     boolean match;
     boolean godkant;
+    boolean admin;
     String connectionURL = null;
     Connection con;
     Statement st = null;
@@ -46,6 +47,8 @@ public class DataAccess {
     String insertAnslag = "INSERT INTO Anslag (AInnehåll, Kategori) VALUES (?, ?)";
     String fileUpload = "insert into Anslag(Filnamn, Fil, Filformat) values ( ?, ?, ?)";
     String getFile = "SELECT Fil, Filformat FROM Anslag WHERE Fil IS NOT NULL AND Filformat IS NOT NULL AND AnslagID = ?";
+    String insertMote = "insert into möte ( tid, Datum, Mötesledare, Deltagare) values (?,?,? ,?)";
+    String tabortMote = "DELETE FROM Möte WHERE Mötesledare=? ";
 
     /*
      * 1. Skapa ett nytt DataAccess object med dina inloggningsuppgifter: DataAccess
@@ -54,7 +57,7 @@ public class DataAccess {
      * 2. Kör metoder, ex: dataAccessObject.laggUppAnslag();
      */
     public DataAccess(String user, String pass) {
-        connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=InfoHemsida;user=" + user + ";password=" + pass;
+        connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=Informatik;user=" + user + ";password=" + pass;
 
         try {
             this.con = DriverManager.getConnection(connectionURL);
@@ -168,46 +171,49 @@ public class DataAccess {
     }
 
     public void laddaUppFil(File file) {
-
-        try {
-            this.con = DriverManager.getConnection(connectionURL);
+        if (file == null) {
+            System.out.println("No file chosen.");
+        } else {
             try {
-                FileInputStream fis = new FileInputStream(file);
-                fps = con.prepareStatement(fileUpload);
+                this.con = DriverManager.getConnection(connectionURL);
+                try {
+                    FileInputStream fis = new FileInputStream(file);
+                    fps = con.prepareStatement(fileUpload);
 
-                // Sätt in filnamn i SQL-kommandot i parameter 1
-                fps.setString(1, file.getName());
+                    // Sätt in filnamn i SQL-kommandot i parameter 1
+                    fps.setString(1, file.getName());
 
-                // Sätt in fil i SQL-kommandot i parameter 2
-                fps.setBinaryStream(2, fis, (int) file.length());
-            } catch (FileNotFoundException e) {
-                System.out.println(e.getMessage());
-            }
-
-            // Hitta filtyp och sätt in det i SQL-kommandot i parameter 3
-            String s = file.getPath();
-            System.out.println(s);
-            String filename = s.substring(s.lastIndexOf("\\"));
-            String extension = filename.substring(filename.indexOf("."));
-            System.out.println(extension); // parameter 3 not set
-            fps.setString(3, extension);
-
-            // Exekvera SQL-kommandot
-            fps.executeUpdate();
-
-        } catch (SQLException ex) {
-            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(ex.getMessage());
-        } finally { // Stänger ps och connection för att undvika memory leakage
-            try {
-                if (con != null) {
-                    con.close();
+                    // Sätt in fil i SQL-kommandot i parameter 2
+                    fps.setBinaryStream(2, fis, (int) file.length());
+                } catch (FileNotFoundException e) {
+                    System.out.println(e.getMessage());
                 }
-                if (fps != null) {
-                    fps.close();
-                }
+
+                // Hitta filtyp och sätt in det i SQL-kommandot i parameter 3
+                String s = file.getPath();
+                System.out.println(s);
+                String filename = s.substring(s.lastIndexOf("\\"));
+                String extension = filename.substring(filename.indexOf("."));
+                System.out.println(extension); // parameter 3 not set
+                fps.setString(3, extension);
+
+                // Exekvera SQL-kommandot
+                fps.executeUpdate();
+
             } catch (SQLException ex) {
                 Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage());
+            } finally { // Stänger ps och connection för att undvika memory leakage
+                try {
+                    if (con != null) {
+                        con.close();
+                    }
+                    if (fps != null) {
+                        fps.close();
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
 
@@ -219,7 +225,7 @@ public class DataAccess {
      * Returnerar fil
      */
     public File hamtaFil(int anslagID) {
-        
+
         // Skapa ny fil för att skriva i
         File file = null;
 
@@ -307,155 +313,228 @@ public class DataAccess {
 
         st.execute("insert into komö (möte,deltagare) values (" + möte + "," + deltagare + ")");
     }
-    
-    
-        
-    public ArrayList <String> getInläggIKategoriFrånBloggTabell (int kolumnIndex,  String kategori) throws ClassNotFoundException, SQLException{
+
+    public ArrayList<String> getInläggIKategoriFrånBloggTabell(int kolumnIndex, String kategori)
+            throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
-        
+
         ResultSet inläggIKategoriTabell = st.executeQuery("Select * from blogginlägg where blogginlägg.Kategori = "
-                + "(Select KategoriID from Kategori where kategori.Kategorinamn = ' "+ kategori + "')");
-        
-        ArrayList<String> inläggIKolumn= new ArrayList();
-        
-        while (inläggIKategoriTabell.next()){
-            
-          inläggIKolumn.add(inläggIKategoriTabell.getString(kolumnIndex));
-        }   
-        
-                return inläggIKolumn;
+                + "(Select KategoriID from Kategori where kategori.Kategorinamn = ' " + kategori + "')");
+
+        ArrayList<String> inläggIKolumn = new ArrayList();
+
+        while (inläggIKategoriTabell.next()) {
+
+            inläggIKolumn.add(inläggIKategoriTabell.getString(kolumnIndex));
+        }
+
+        return inläggIKolumn;
     }
-    
-    
-        public ArrayList <String> getKolumnFrånTabell (int kolumnIndex, String tabellNamn, String sorteraEfter) throws ClassNotFoundException, SQLException{
+
+    public ArrayList<String> getKolumnFrånTabell(int kolumnIndex, String tabellNamn, String sorteraEfter)
+            throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
-        
-        ResultSet bloggVärdenTabell = st.executeQuery("Select top 5 * from " + tabellNamn + " order by " + sorteraEfter +  " desc");
-        
+
+        ResultSet bloggVärdenTabell = st
+                .executeQuery("Select top 5 * from " + tabellNamn + " order by " + sorteraEfter + " desc");
+
         ArrayList<String> bloggVärden = new ArrayList();
-        
-        while (bloggVärdenTabell.next()){
-            
-          bloggVärden.add(bloggVärdenTabell.getString(kolumnIndex));
-        }   
-        
+
+        while (bloggVärdenTabell.next()) {
+
+            bloggVärden.add(bloggVärdenTabell.getString(kolumnIndex));
+        }
+
         return bloggVärden;
     }
-    
-    
-    
-    //en version
-    public ArrayList <String> getInläggIKategori (int kolumnIndex, String tabellNamn, String kategori) throws ClassNotFoundException, SQLException{
+
+    // en version
+    public ArrayList<String> getInläggIKategori(int kolumnIndex, String tabellNamn, String kategori)
+            throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
-        
-        ResultSet bloggVärdenTabell = st.executeQuery("Select * from "+ tabellNamn+ " where blogginlägg.Kategori ="
-                + "(Select KategoriID from Kategori where kategori.Kategorinamn = ' "+ kategori + "')");
-        
+
+        ResultSet bloggVärdenTabell = st.executeQuery("Select * from " + tabellNamn + " where blogginlägg.Kategori ="
+                + "(Select KategoriID from Kategori where kategori.Kategorinamn = ' " + kategori + "')");
+
         ArrayList<String> bloggVärden = new ArrayList();
-        
-        while (bloggVärdenTabell.next()){
-            
-          bloggVärden.add(bloggVärdenTabell.getString(kolumnIndex));
-        }   
-        
+
+        while (bloggVärdenTabell.next()) {
+
+            bloggVärden.add(bloggVärdenTabell.getString(kolumnIndex));
+        }
+
         return bloggVärden;
     }
-    
-    
-    
-        public ArrayList <String> getKolumn (int kolumnIndex, String tabellNamn) throws ClassNotFoundException, SQLException{
+
+    public ArrayList<String> getKolumn(int kolumnIndex, String tabellNamn) throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
-        
+
         ResultSet bloggVärdenTabell = st.executeQuery("Select * from " + tabellNamn);
-        
+
         ArrayList<String> bloggVärden = new ArrayList();
-        
-        while (bloggVärdenTabell.next()){
-            
-          bloggVärden.add(bloggVärdenTabell.getString(kolumnIndex));
-        }   
-        
+
+        while (bloggVärdenTabell.next()) {
+
+            bloggVärden.add(bloggVärdenTabell.getString(kolumnIndex));
+        }
+
         return bloggVärden;
     }
-    
-    
-    public boolean verifieraVärde(ArrayList kolumn, int indexPåListan){
-        
-        if(kolumn.size() <= indexPåListan){
-            
+
+    public boolean verifieraVärde(ArrayList kolumn, int indexPåListan) {
+
+        if (kolumn.size() <= indexPåListan) {
+
             return true;
         }
-        
-        else return false;
+
+        else
+            return false;
 
     }
 
-    public void skickaKommentar (String avsändare, String kommentar, String inlägg) throws SQLException, ClassNotFoundException{
-        
+    public void skickaKommentar(String avsändare, String kommentar, String inlägg)
+            throws SQLException, ClassNotFoundException {
+
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
-        
-        st.execute("Insert into kommentarer (avsändare, kommentar, inlägg) values('" + avsändare + "','" + kommentar + "'," + inlägg + ")");
+
+        st.execute("Insert into kommentarer (avsändare, kommentar, inlägg) values('" + avsändare + "','" + kommentar
+                + "'," + inlägg + ")");
 
     }
-    
-    public String getInläggID (String inläggRubrik) throws SQLException, ClassNotFoundException{
-        
+
+    public String getInläggID(String inläggRubrik) throws SQLException, ClassNotFoundException {
+
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
-        
-        ResultSet inläggIdTabell = st.executeQuery("Select InläggID from bloggInlägg where Rubrik ='" + inläggRubrik + "'");
-        
-         String inläggID = null;
-        while(inläggIdTabell.next()){
-        
-           inläggID = inläggIdTabell.getString(1);
-        
+
+        ResultSet inläggIdTabell = st
+                .executeQuery("Select InläggID from bloggInlägg where Rubrik ='" + inläggRubrik + "'");
+
+        String inläggID = null;
+        while (inläggIdTabell.next()) {
+
+            inläggID = inläggIdTabell.getString(1);
+
         }
-        
+
         return inläggID;
 
     }
-    
 
-    public void skapaKategori (String nyKategori) throws SQLException, ClassNotFoundException{
-        
+    public void skapaKategori(String nyKategori) throws SQLException, ClassNotFoundException {
+
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
-        
-        st.execute("Insert into kategori (Kategorinamn) values('" + nyKategori +")");
-        
-    }
-    
-        public void taBortKategori (String enKategori) throws SQLException, ClassNotFoundException{
-        
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        this.con = DriverManager.getConnection(connectionURL);
-        Statement st = con.createStatement();
-        
-        st.execute("Delete from kategori where Kategorinamn = '" + enKategori +")");
-    }
-        
-    public void skapaBloggInlägg(String rubrik, String inläggInnehåll, String kategori) throws ClassNotFoundException, SQLException{
-        
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        this.con = DriverManager.getConnection(connectionURL);
-        Statement st = con.createStatement();
-        
-        
-        
-        st.execute("insert into Blogginlägg (Rubrik, BInnehåll) Values ('" + rubrik + "','" + inläggInnehåll + "', " + kategori + ")");
+
+        st.execute("Insert into kategori (Kategorinamn) values('" + nyKategori + ")");
 
     }
+
+    public void taBortKategori(String enKategori) throws SQLException, ClassNotFoundException {
+
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+
+        st.execute("Delete from kategori where Kategorinamn = '" + enKategori + ")");
+    }
+
+    public void skapaBloggInlägg(String rubrik, String inläggInnehåll, String kategori)
+            throws ClassNotFoundException, SQLException {
+        System.out.println("kategori"+kategori);
+        int kategoriID = 0;
+        boolean succé = false;
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+
+        ResultSet valdKategoriTabell = st.executeQuery("Select top 1 KategoriID from kategori where kategorinamn ='" + kategori + "'");
+        ArrayList<Integer> valdKategoriID = new ArrayList<Integer>();
+
+        while (valdKategoriTabell.next()) {
+
+            kategoriID = valdKategoriTabell.getInt(1);
+        }
+        System.out.println("kategori id"+ kategoriID);
+        if (kategoriID != 0) {
+
+            st.execute("insert into Blogginlägg (Rubrik, BInnehåll, Kategori) Values ('" + rubrik + "','" + inläggInnehåll + "', "
+                    + kategoriID + ")");
+            System.out.println("Blogginlägget sparades med kategori : " + kategoriID);
+        }
+
+        else
+            System.out.println("Kategorin finns ej.");
+
+    }
+
+    public void setMote(String tid, String datum, String motesledare, String deltagare)
+            throws ClassNotFoundException, SQLException {
+
+        try {
+            ps = con.prepareStatement(insertMote);
+
+            ps.setString(1, tid);
+            ps.setString(2, datum);
+            ps.setString(3, motesledare);
+            ps.setString(4, deltagare);
+
+            // ps.setString(4, mejl);*
+
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } finally { // stänger ps och connection för att undvika memory leakage
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void deleteMote(String motesledare) throws ClassNotFoundException, SQLException {
+        try {
+            ps = con.prepareStatement(tabortMote);
+
+            ps.setString(1, motesledare);
+
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } finally { // stänger ps och connection för att undvika memory leakage
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
 }

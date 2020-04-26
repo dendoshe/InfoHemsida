@@ -30,8 +30,11 @@ public class VisaMöten extends javax.swing.JFrame {
     Connection con;
     Statement st = null;
     PreparedStatement ps = null;
+    
     public VisaMöten() {
         initComponents();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setLocationRelativeTo(null);
         möte = new ArrayList<String>();
     }
 

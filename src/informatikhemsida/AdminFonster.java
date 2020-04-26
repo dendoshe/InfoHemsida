@@ -25,6 +25,8 @@ public class AdminFonster extends javax.swing.JFrame {
     
     public AdminFonster() {
         initComponents();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -126,7 +128,7 @@ public class AdminFonster extends javax.swing.JFrame {
 
     private void btAdminStangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdminStangActionPerformed
         this.setVisible(false);
-        new InloggFonster().setVisible(true);
+        new StartsidaFonster().setVisible(true);
     }//GEN-LAST:event_btAdminStangActionPerformed
 
     /**
