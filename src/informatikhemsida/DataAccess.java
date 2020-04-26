@@ -26,25 +26,11 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
-import javax.swing.JList;
 import javax.swing.JTextField;
 import java.sql.Blob;
 import java.awt.Desktop;
 
 public class DataAccess {
-
-    public int MötesID;
-    public String Tid;
-    public String Datum;
-    public int Mötesledare;
-    public int Deltagare;
-    ArrayList<String> möte;
 
     JTextField textruta1;
     JTextField textruta2;
@@ -68,7 +54,7 @@ public class DataAccess {
      * 2. Kör metoder, ex: dataAccessObject.laggUppAnslag();
      */
     public DataAccess(String user, String pass) {
-        connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=Informatik;user=" + user + ";password=" + pass;
+        connectionURL = "jdbc:sqlserver://localhost:53158;databaseName=InfoHemsida;user=" + user + ";password=" + pass;
 
         try {
             this.con = DriverManager.getConnection(connectionURL);
@@ -98,14 +84,6 @@ public class DataAccess {
         return match;
     }
 
-    public void populateJList(JList jList1) {
-        DefaultListModel dlm = new DefaultListModel();
-        for (String m : möte) {
-            dlm.addElement(m);
-        }
-        jList1 = new JList(dlm);
-    }
-
     public boolean verifieraAdmin(String inMejl) throws SQLException, ClassNotFoundException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
@@ -128,75 +106,21 @@ public class DataAccess {
         return match;
     }
 
-    public ArrayList<String> hamtaMote() throws ClassNotFoundException, SQLException {
-
-        ResultSet mötetabell = st.executeQuery("select MötesID, Tid, Datum, Mötesledare, Deltagare FROM Möte");
-        möte = new ArrayList<>();
-
-        while (mötetabell.next()) {
-            MötesID = mötetabell.getInt("MötesID");
-            Tid = mötetabell.getString("Tid");
-            Datum = mötetabell.getString("Datum");
-            Mötesledare = mötetabell.getInt("Mötesledare");
-            Deltagare = mötetabell.getInt("Deltagare");
-            möte.add(Integer.toString(MötesID) + "            " + Tid.substring(0, 5) + "           " + Datum
-                    + "              " + Integer.toString(Mötesledare) + "                 "
-                    + Integer.toString(Deltagare));
-            System.out.println(Integer.toString(MötesID) + ", " + Tid + ", " + Datum + ", "
-                    + Integer.toString(Mötesledare) + ", " + Integer.toString(Deltagare) + ";");
-        }
-
-        return möte;
-    }
-
     public void skapaKonto(String mejladress, String losenord) throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
         st.execute("INSERT INTO KONTO (Mejladress, Lösenord, Notis, AdminFunktionalitet) VALUES" + "('" + mejladress
                 + "','" + losenord + "', 1,0)");
-    }
 
-    public String datum;
-
-    public ArrayList<String> hamtaMoteDatum() throws ClassNotFoundException, SQLException {
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        this.con = DriverManager.getConnection(connectionURL);
-        Statement st = con.createStatement();
-        ResultSet mötetabell = st.executeQuery("select Tid, Datum, Mötesledare, Deltagare FROM Möte");
-        ArrayList<String> möte = new ArrayList<String>();
-        String ettDatum;
-
-        while (mötetabell.next()) {
-
-            ettDatum = mötetabell.getString("Datum");
-            möte.add(ettDatum);
-            System.out.println(ettDatum);
-        }
-
-        return möte;
     }
 
     public void tilldelaAdmin(String inMejl) throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
+
         st.execute("Update Konto set AdminFunktionalitet = 1 where Mejladress = '" + inMejl + "'");
-    }
-
-    public String visaSchemaTid(JComboBox goled) throws SQLException, ClassNotFoundException {
-        ResultSet tid = st.executeQuery("select tid from möte where datum = '" + datum + "'");
-
-        String enTid = null;
-        ArrayList<String> möte = new ArrayList<String>();
-        while (tid.next()) {
-            enTid = tid.getString("tid");
-            möte.add(enTid);
-            System.out.println(enTid);
-            datum = goled.getSelectedItem().toString();
-        }
-        ;
-        return enTid;
     }
 
     public void taBortAdmin(String inMejl) throws ClassNotFoundException, SQLException {
@@ -295,7 +219,7 @@ public class DataAccess {
      * Returnerar fil
      */
     public File hamtaFil(int anslagID) {
-
+        
         // Skapa ny fil för att skriva i
         File file = null;
 
@@ -383,33 +307,155 @@ public class DataAccess {
 
         st.execute("insert into komö (möte,deltagare) values (" + möte + "," + deltagare + ")");
     }
-
-    public String visaMöteledare(JComboBox goled) throws SQLException, ClassNotFoundException {
-        String datum = goled.getSelectedItem().toString();
-
-        ResultSet tid = st.executeQuery("select mötesledare from möte where datum = '" + datum + "'");
-
-        String enTid = null;
-        ArrayList<String> möte = new ArrayList<String>();
-        while (tid.next()) {
-            enTid = tid.getString("mötesledare");
-            möte.add(enTid);
-            System.out.println(enTid);
-
-        }
-        return enTid;
-    }
-
-    public String hamtaMötes() throws ClassNotFoundException, SQLException {
+    
+    
+        
+    public ArrayList <String> getInläggIKategoriFrånBloggTabell (int kolumnIndex,  String kategori) throws ClassNotFoundException, SQLException{
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
-        return null;
+        
+        ResultSet inläggIKategoriTabell = st.executeQuery("Select * from blogginlägg where blogginlägg.Kategori = "
+                + "(Select KategoriID from Kategori where kategori.Kategorinamn = ' "+ kategori + "')");
+        
+        ArrayList<String> inläggIKolumn= new ArrayList();
+        
+        while (inläggIKategoriTabell.next()){
+            
+          inläggIKolumn.add(inläggIKategoriTabell.getString(kolumnIndex));
+        }   
+        
+                return inläggIKolumn;
+    }
+    
+    
+        public ArrayList <String> getKolumnFrånTabell (int kolumnIndex, String tabellNamn, String sorteraEfter) throws ClassNotFoundException, SQLException{
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        ResultSet bloggVärdenTabell = st.executeQuery("Select top 5 * from " + tabellNamn + " order by " + sorteraEfter +  " desc");
+        
+        ArrayList<String> bloggVärden = new ArrayList();
+        
+        while (bloggVärdenTabell.next()){
+            
+          bloggVärden.add(bloggVärdenTabell.getString(kolumnIndex));
+        }   
+        
+        return bloggVärden;
+    }
+    
+    
+    
+    //en version
+    public ArrayList <String> getInläggIKategori (int kolumnIndex, String tabellNamn, String kategori) throws ClassNotFoundException, SQLException{
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        ResultSet bloggVärdenTabell = st.executeQuery("Select * from "+ tabellNamn+ " where blogginlägg.Kategori ="
+                + "(Select KategoriID from Kategori where kategori.Kategorinamn = ' "+ kategori + "')");
+        
+        ArrayList<String> bloggVärden = new ArrayList();
+        
+        while (bloggVärdenTabell.next()){
+            
+          bloggVärden.add(bloggVärdenTabell.getString(kolumnIndex));
+        }   
+        
+        return bloggVärden;
+    }
+    
+    
+    
+        public ArrayList <String> getKolumn (int kolumnIndex, String tabellNamn) throws ClassNotFoundException, SQLException{
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        ResultSet bloggVärdenTabell = st.executeQuery("Select * from " + tabellNamn);
+        
+        ArrayList<String> bloggVärden = new ArrayList();
+        
+        while (bloggVärdenTabell.next()){
+            
+          bloggVärden.add(bloggVärdenTabell.getString(kolumnIndex));
+        }   
+        
+        return bloggVärden;
+    }
+    
+    
+    public boolean verifieraVärde(ArrayList kolumn, int indexPåListan){
+        
+        if(kolumn.size() <= indexPåListan){
+            
+            return true;
+        }
+        
+        else return false;
+
     }
 
-    ArrayList<HashMap<String, String>> connectionURL(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
-                                                                       // Tools | Templates.
-    }
+    public void skickaKommentar (String avsändare, String kommentar, String inlägg) throws SQLException, ClassNotFoundException{
+        
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        st.execute("Insert into kommentarer (avsändare, kommentar, inlägg) values('" + avsändare + "','" + kommentar + "'," + inlägg + ")");
 
+    }
+    
+    public String getInläggID (String inläggRubrik) throws SQLException, ClassNotFoundException{
+        
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        ResultSet inläggIdTabell = st.executeQuery("Select InläggID from bloggInlägg where Rubrik ='" + inläggRubrik + "'");
+        
+         String inläggID = null;
+        while(inläggIdTabell.next()){
+        
+           inläggID = inläggIdTabell.getString(1);
+        
+        }
+        
+        return inläggID;
+
+    }
+    
+
+    public void skapaKategori (String nyKategori) throws SQLException, ClassNotFoundException{
+        
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        st.execute("Insert into kategori (Kategorinamn) values('" + nyKategori +")");
+        
+    }
+    
+        public void taBortKategori (String enKategori) throws SQLException, ClassNotFoundException{
+        
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        st.execute("Delete from kategori where Kategorinamn = '" + enKategori +")");
+    }
+        
+    public void skapaBloggInlägg(String rubrik, String inläggInnehåll, String kategori) throws ClassNotFoundException, SQLException{
+        
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+        
+        
+        
+        st.execute("insert into Blogginlägg (Rubrik, BInnehåll) Values ('" + rubrik + "','" + inläggInnehåll + "', " + kategori + ")");
+
+    }
 }

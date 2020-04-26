@@ -22,7 +22,6 @@ public class InloggFonster extends javax.swing.JFrame {
     
     DataAccess access = new DataAccess("admin","team15");
     
-    
     public InloggFonster() {
         initComponents();
     }

@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  */
 public class SkapaKontoFonster extends javax.swing.JFrame {
 
-    DataAccess kontroller = new DataAccess();
+    DataAccess kontroller = new DataAccess("admin","team15");
     public SkapaKontoFonster() {
         initComponents();
     }
