@@ -54,7 +54,7 @@ public class DataAccess {
      * 2. Kör metoder, ex: dataAccessObject.laggUppAnslag();
      */
     public DataAccess(String user, String pass) {
-        connectionURL = "jdbc:sqlserver://localhost:53158;databaseName=InfoHemsida;user=" + user + ";password=" + pass;
+        connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=InfoHemsida;user=" + user + ";password=" + pass;
 
         try {
             this.con = DriverManager.getConnection(connectionURL);
@@ -64,7 +64,7 @@ public class DataAccess {
     }
 
     public boolean verifieraInlogg(String inMejl, String inLösenord) throws SQLException, ClassNotFoundException {
-        connectionURL = "jdbc:sqlserver://localhost:53158;databaseName=Informatik;user=admin;password=team15";
+        connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=Informatik;user=admin;password=team15";
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
 
