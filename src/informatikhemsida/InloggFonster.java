@@ -20,7 +20,8 @@ public class InloggFonster extends javax.swing.JFrame {
      * Creates new form InloggFonster
      */
     
-    DataAccess access = new DataAccess();
+    DataAccess access = new DataAccess("admin","team15");
+    
     
     public InloggFonster() {
         initComponents();
