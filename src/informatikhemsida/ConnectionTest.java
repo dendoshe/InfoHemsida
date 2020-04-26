@@ -19,17 +19,13 @@ public class ConnectionTest {
     
     
     /*För att köra detta behöver du högerklicka på klassen i menyn till höger och trycka run file*/
-    
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        test();
-}
-    public static void test () throws SQLException, ClassNotFoundException{
+     public static void main(String[] args) throws ClassNotFoundException, SQLException  {
     
         /*detta hämtar en JDBC (Java Database Connection) interface*/
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
         /*detta är vad som upprättar en connection. Om det blir en error med något med TCP/IP, fråga Diana*/
-        String connectionURL = "jdbc:sqlserver://localhost:53158;databaseName=Informatik;user=admin;password=team15";
+        String connectionURL = "jdbc:sqlserver://localhost:53158;databaseName=InfoHemsida;user=admin;password=team15";
         
         /*Detta är en variabel för att komma åt data via connection*/
         Connection con = DriverManager.getConnection(connectionURL);
@@ -43,6 +39,9 @@ public class ConnectionTest {
         System.out.println(ID + " " + Name);}
         System.out.println("Succé!");
     }
+        
+    
+
             
     
         

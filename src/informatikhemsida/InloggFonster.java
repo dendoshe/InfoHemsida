@@ -8,6 +8,7 @@ package informatikhemsida;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,7 +20,7 @@ public class InloggFonster extends javax.swing.JFrame {
      * Creates new form InloggFonster
      */
     
-    DataAccess access = new DataAccess();
+    DataAccess access = new DataAccess("admin","team15");
     
     public InloggFonster() {
         initComponents();
@@ -36,21 +37,19 @@ public class InloggFonster extends javax.swing.JFrame {
 
         btnLoggaIn = new javax.swing.JButton();
         tfMejl = new javax.swing.JTextField();
-        tfLosenord = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        lbMejl = new javax.swing.JLabel();
+        lbLosenord = new javax.swing.JLabel();
+        tfLosenord = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnLoggaIn.setText("jButton1");
+        btnLoggaIn.setText("Logga in");
         btnLoggaIn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoggaInActionPerformed(evt);
             }
         });
-
-        tfMejl.setText("jTextField1");
-
-        tfLosenord.setText("jTextField2");
 
         jButton1.setText("Ny på jobbet?");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -59,38 +58,55 @@ public class InloggFonster extends javax.swing.JFrame {
             }
         });
 
+        lbMejl.setText("Mejladress:");
+
+        lbLosenord.setText("Lösenord:");
+
+        tfLosenord.setText("jPasswordField1");
+        tfLosenord.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfLosenordActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(81, 81, 81)
-                .addComponent(tfMejl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
-                .addComponent(tfLosenord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(73, 73, 73))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnLoggaIn)
-                        .addGap(85, 85, 85))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addContainerGap())))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(110, 110, 110)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbMejl)
+                            .addComponent(tfMejl, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(43, 43, 43)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(tfLosenord, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lbLosenord))
+                            .addComponent(btnLoggaIn, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbMejl)
+                    .addComponent(lbLosenord))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfMejl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tfLosenord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnLoggaIn)
-                .addGap(98, 98, 98))
+                .addGap(120, 120, 120))
         );
 
         pack();
@@ -100,12 +116,23 @@ public class InloggFonster extends javax.swing.JFrame {
       
         
         try {
-            if (access.verifieraInlogg(tfMejl.getText(), tfLosenord.getText()) == true)
+            
+            if(access.verifieraInlogg(tfMejl.getText(), tfLosenord.getText()) == true && access.verifieraAdmin(tfMejl.getText()) == true){
+                
+            System.out.println("ADMIN");
+            this.setVisible(false);
+            new AdminFonster().setVisible(true);
+            }
+            
+            else if (access.verifieraInlogg(tfMejl.getText(), tfLosenord.getText()) == true && access.verifieraAdmin(tfMejl.getText()) == false)
             {System.out.println("Uppgifterna stämmer.");
+            this.setVisible(false);
             new SkapaAnslagFonster().setVisible(true);
             }
             
-            else {}
+            else {
+                JOptionPane.showMessageDialog(null, "Uppgifterna stämmer ej.");
+            }
         } catch (SQLException ex) {
             Logger.getLogger(InloggFonster.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -118,6 +145,10 @@ public class InloggFonster extends javax.swing.JFrame {
         new SkapaKontoFonster().setVisible(true);
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void tfLosenordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfLosenordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfLosenordActionPerformed
 
     /**
      * @param args the command line arguments
@@ -157,7 +188,9 @@ public class InloggFonster extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLoggaIn;
     private javax.swing.JButton jButton1;
-    private javax.swing.JTextField tfLosenord;
+    private javax.swing.JLabel lbLosenord;
+    private javax.swing.JLabel lbMejl;
+    private javax.swing.JPasswordField tfLosenord;
     private javax.swing.JTextField tfMejl;
     // End of variables declaration//GEN-END:variables
 }

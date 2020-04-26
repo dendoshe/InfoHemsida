@@ -13,27 +13,25 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author OruStandalone
+ * @author Diana Jumaili
  */
 public class SkapaBloggInläggFonster extends javax.swing.JFrame {
+    
+    DataAccess access = new DataAccess("admin","team15");
 
     /**
      * Creates new form SkapaBloggInläggFonster
      */
-    
-    DataAccess access = new DataAccess();
-    
-    public SkapaBloggInläggFonster() throws SQLException, ClassNotFoundException {
-        initComponents();
+    public SkapaBloggInläggFonster() throws ClassNotFoundException, SQLException {
+                initComponents();
         
         cbBloggKategori.removeAllItems();
         
-        ArrayList <String> kategorier = access.getBloggKategorier();
+        ArrayList <String> kategorier = access.getKolumnFrånTabell(2, "Kategori", "KategoriID");
         
         for (String kategori : kategorier) {
         cbBloggKategori.addItem(kategori);  
         }
-        
     }
 
     /**
@@ -45,98 +43,87 @@ public class SkapaBloggInläggFonster extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        tfBloggInläggRubrik = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         cbBloggKategori = new javax.swing.JComboBox<>();
         btnSkapaBloggInlägg = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        tfBloggInläggRubrik = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
         taBloggInläggInnehåll = new javax.swing.JTextArea();
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        tfBloggInläggRubrik.setText("jTextField1");
-
-        jLabel1.setText("Rubrik:");
-
-        jLabel2.setText("Inläggets innehåll:");
-
         cbBloggKategori.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        btnSkapaBloggInlägg.setText("Posta");
+        btnSkapaBloggInlägg.setText("Posta inlägg");
         btnSkapaBloggInlägg.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSkapaBloggInläggActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Bifoga dokument/bild");
-
         taBloggInläggInnehåll.setColumns(20);
         taBloggInläggInnehåll.setRows(5);
-        jScrollPane2.setViewportView(taBloggInläggInnehåll);
+        taBloggInläggInnehåll.setText("Innehåll");
+        taBloggInläggInnehåll.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                taBloggInläggInnehållMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(taBloggInläggInnehåll);
+
+        jLabel1.setText("Rubrik:");
+
+        jLabel2.setText("Kategori:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(58, 58, 58)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jScrollPane2)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(jButton1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                            .addComponent(btnSkapaBloggInlägg))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnSkapaBloggInlägg, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(27, 27, 27))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addComponent(tfBloggInläggRubrik)
-                        .addComponent(cbBloggKategori, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(65, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2)
+                        .addGap(109, 109, 109))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(tfBloggInläggRubrik, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
+                        .addComponent(cbBloggKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(50, 50, 50))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(45, 45, 45)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfBloggInläggRubrik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(cbBloggKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(47, 47, 47)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(btnSkapaBloggInlägg))
-                .addContainerGap(51, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfBloggInläggRubrik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbBloggKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(55, 55, 55)
+                .addComponent(btnSkapaBloggInlägg)
+                .addGap(39, 39, 39))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSkapaBloggInläggActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSkapaBloggInläggActionPerformed
-        
-        boolean succe = false;
+         boolean succe = false;
         
         String kategori = null;
         
@@ -144,19 +131,24 @@ public class SkapaBloggInläggFonster extends javax.swing.JFrame {
         
         try {
             access.skapaBloggInlägg(tfBloggInläggRubrik.getText(), taBloggInläggInnehåll.getText(), kategori);
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SkapaBloggInläggFonster.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
             Logger.getLogger(SkapaBloggInläggFonster.class.getName()).log(Level.SEVERE, null, ex);
         }
+            
+
         succe = true;
         
         if(succe = true){
         JOptionPane.showMessageDialog(null, "Inlägget har skapats!");
         }       
         else { JOptionPane.showMessageDialog(null, "Något gick fel");}
-        
-        
-        
     }//GEN-LAST:event_btnSkapaBloggInläggActionPerformed
+
+    private void taBloggInläggInnehållMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_taBloggInläggInnehållMouseClicked
+        taBloggInläggInnehåll.setText(" ");
+    }//GEN-LAST:event_taBloggInläggInnehållMouseClicked
 
     /**
      * @param args the command line arguments
@@ -190,9 +182,9 @@ public class SkapaBloggInläggFonster extends javax.swing.JFrame {
             public void run() {
                 try {
                     new SkapaBloggInläggFonster().setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(SkapaBloggInläggFonster.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(SkapaBloggInläggFonster.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
                     Logger.getLogger(SkapaBloggInläggFonster.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -202,12 +194,9 @@ public class SkapaBloggInläggFonster extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSkapaBloggInlägg;
     private javax.swing.JComboBox<String> cbBloggKategori;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextArea taBloggInläggInnehåll;
     private javax.swing.JTextField tfBloggInläggRubrik;
     // End of variables declaration//GEN-END:variables
