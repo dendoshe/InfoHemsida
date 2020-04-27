@@ -32,6 +32,7 @@ public class KommenteraFonster extends javax.swing.JFrame {
 
     public KommenteraFonster(String inläggRubrik) throws SQLException, ClassNotFoundException {
         initComponents();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         this.inläggID = access.getInläggID(inläggRubrik);
 

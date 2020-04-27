@@ -8,6 +8,7 @@ package informatikhemsida;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -19,7 +20,11 @@ public class StartsidaFonster extends javax.swing.JFrame {
      * Creates new form StartsidaFonster
      */
     public StartsidaFonster() {
+        super("Blackboard Pro");
         initComponents();
+        setLocationRelativeTo(null);
+        
+        
     }
 
     /**
@@ -34,9 +39,11 @@ public class StartsidaFonster extends javax.swing.JFrame {
         bloggBtn = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         moteBtn = new javax.swing.JButton();
-        scheduleBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        bokaMoteBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,54 +68,87 @@ public class StartsidaFonster extends javax.swing.JFrame {
             }
         });
 
-        scheduleBtn.setText("Schema");
-        scheduleBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                scheduleBtnActionPerformed(evt);
+        DataAccess da = new DataAccess("admin","team15");
+        jTable1.setFont(new java.awt.Font("Arial", 2, 14)); // NOI18N
+        jTable1.setModel(da.visaForskning());
+        jTable1.setRowHeight(24);
+        jScrollPane1.setViewportView(jTable1);
+
+        jTable2.setFont(new java.awt.Font("Arial", 2, 14)); // NOI18N
+        jTable2.setModel(da.visaUtbildning());
+        jTable2.setRowHeight(24);
+        jScrollPane2.setViewportView(jTable2);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = jTable1.rowAtPoint(evt.getPoint());
+                int col = jTable1.columnAtPoint(evt.getPoint());
+                if (row >= 0 && col == 1) {
+                    System.out.println("works");
+                    System.out.println("row: " + row + "/n column: " + col);
+                    int anslagID = da.hamtaAnslagID( (String) jTable1.getValueAt(row, col-1));
+                    da.hamtaFil(anslagID);
+                }
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = jTable1.rowAtPoint(evt.getPoint());
+                int col = jTable1.columnAtPoint(evt.getPoint());
+                if (row >= 0 && col == 1) {
+                    System.out.println("works");
+                    System.out.println("row: " + row + "/n column: " + col);
+                    int anslagID = da.hamtaAnslagID( (String) jTable2.getValueAt(row, col-1));
+                    da.hamtaFil(anslagID);
+                }
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        });
+
+        bokaMoteBtn.setText("Boka möte");
+        bokaMoteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bokaMoteBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(bloggBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scheduleBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(moteBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
-                        .addGap(0, 3, Short.MAX_VALUE)))
+                        .addComponent(bokaMoteBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 792, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(8, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bloggBtn)
-                    .addComponent(scheduleBtn)
+                    .addComponent(jButton2)
                     .addComponent(moteBtn)
-                    .addComponent(jButton2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(bloggBtn)
+                    .addComponent(bokaMoteBtn))
+                .addContainerGap())
         );
 
         pack();
@@ -125,16 +165,22 @@ public class StartsidaFonster extends javax.swing.JFrame {
     }//GEN-LAST:event_bloggBtnActionPerformed
 
     private void moteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moteBtnActionPerformed
-        
+        try {
+            new möten().setVisible(true);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(StartsidaFonster.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(StartsidaFonster.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_moteBtnActionPerformed
-
-    private void scheduleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scheduleBtnActionPerformed
-
-    }//GEN-LAST:event_scheduleBtnActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         new SkapaAnslagFonster().setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void bokaMoteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bokaMoteBtnActionPerformed
+        new BokaMoteFonster().setVisible(true);
+    }//GEN-LAST:event_bokaMoteBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -173,10 +219,12 @@ public class StartsidaFonster extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bloggBtn;
+    private javax.swing.JButton bokaMoteBtn;
     private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JButton moteBtn;
-    private javax.swing.JButton scheduleBtn;
     // End of variables declaration//GEN-END:variables
 }

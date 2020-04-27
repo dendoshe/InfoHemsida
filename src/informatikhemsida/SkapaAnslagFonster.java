@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -186,6 +187,7 @@ public class SkapaAnslagFonster extends javax.swing.JFrame {
             new StartsidaFonster().setVisible(true);
             DataAccess da = new DataAccess("admin", "team15");
             da.laggUppAnslag(anslag);
+            StartsidaFonster startsida = new StartsidaFonster();
         }
     }// GEN-LAST:event_publishBtnActionPerformed
 
