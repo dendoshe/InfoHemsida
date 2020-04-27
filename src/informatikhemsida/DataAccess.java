@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,13 +21,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
 import java.sql.Blob;
 import java.awt.Desktop;
 
@@ -45,10 +52,13 @@ public class DataAccess {
     PreparedStatement fps = null;
 
     String insertAnslag = "INSERT INTO Anslag (AInnehåll, Kategori) VALUES (?, ?)";
-    String fileUpload = "insert into Anslag(Filnamn, Fil, Filformat) values ( ?, ?, ?)";
+    String fileUpload = "UPDATE Anslag SET Filnamn = ?, Fil = ?, Filformat = ? WHERE AnslagID = ?";
     String getFile = "SELECT Fil, Filformat FROM Anslag WHERE Fil IS NOT NULL AND Filformat IS NOT NULL AND AnslagID = ?";
     String insertMote = "insert into möte ( tid, Datum, Mötesledare, Deltagare) values (?,?,? ,?)";
     String tabortMote = "DELETE FROM Möte WHERE Mötesledare=? ";
+    String hamtaForskning = "SELECT AInnehåll, Filnamn FROM ANSLAG WHERE Kategori = 1";
+    String hamtaUtbildning = "SELECT AInnehåll, Filnamn FROM ANSLAG WHERE Kategori = 2";
+    String hamtaAnslagID = "SELECT AnslagID FROM Anslag WHERE AInnehåll LIKE ?";
 
     /*
      * 1. Skapa ett nytt DataAccess object med dina inloggningsuppgifter: DataAccess
@@ -144,13 +154,23 @@ public class DataAccess {
         String body = anslag.get("AInnehåll").toString();
         int category = (int) anslag.get("Kategori");
         File file = (File) anslag.get("Fil");
+        BigDecimal anslagID = null;
 
         try {
-            ps = con.prepareStatement(insertAnslag);
+            // "new String[]{"AnslagID"} gör så man kan returnera primärnyckel i samma
+            // SQL-fråga
+            ps = con.prepareStatement(insertAnslag, new String[] { "AnslagID" });
             ps.setString(1, body);
             ps.setInt(2, category);
             ps.executeUpdate();
-            laddaUppFil(file);
+
+            // Hämta primärnyckel av det som precis exekverades i SQL
+            ResultSet rs = ps.getGeneratedKeys();
+            while (rs.next()) {
+                anslagID = (BigDecimal) rs.getObject(1);
+            }
+
+            laddaUppFil(file, anslagID);
 
         } catch (SQLException ex) {
             Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
@@ -170,53 +190,80 @@ public class DataAccess {
 
     }
 
-    public void laddaUppFil(File file) {
-        if (file == null) {
-            System.out.println("No file chosen.");
-        } else {
+    public void laddaUppFil(File file, BigDecimal anslagID) {
+
+        try {
+            this.con = DriverManager.getConnection(connectionURL);
             try {
-                this.con = DriverManager.getConnection(connectionURL);
-                try {
-                    FileInputStream fis = new FileInputStream(file);
-                    fps = con.prepareStatement(fileUpload);
+                FileInputStream fis = new FileInputStream(file);
+                fps = con.prepareStatement(fileUpload);
 
-                    // Sätt in filnamn i SQL-kommandot i parameter 1
-                    fps.setString(1, file.getName());
+                // Sätt in filnamn i SQL-kommandot i parameter 1
+                fps.setString(1, file.getName());
 
-                    // Sätt in fil i SQL-kommandot i parameter 2
-                    fps.setBinaryStream(2, fis, (int) file.length());
-                } catch (FileNotFoundException e) {
-                    System.out.println(e.getMessage());
+                // Sätt in fil i SQL-kommandot i parameter 2
+                fps.setBinaryStream(2, fis, (int) file.length());
+            } catch (FileNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
+
+            // Hitta filtyp och sätt in det i SQL-kommandot i parameter 3
+            String s = file.getPath();
+            System.out.println(s);
+            String filename = s.substring(s.lastIndexOf("\\"));
+            String extension = filename.substring(filename.indexOf("."));
+            fps.setString(3, extension);
+
+            fps.setBigDecimal(4, anslagID);
+
+            // Exekvera SQL-kommandot
+            fps.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } finally { // Stänger ps och connection för att undvika memory leakage
+            try {
+                if (con != null) {
+                    con.close();
                 }
-
-                // Hitta filtyp och sätt in det i SQL-kommandot i parameter 3
-                String s = file.getPath();
-                System.out.println(s);
-                String filename = s.substring(s.lastIndexOf("\\"));
-                String extension = filename.substring(filename.indexOf("."));
-                System.out.println(extension); // parameter 3 not set
-                fps.setString(3, extension);
-
-                // Exekvera SQL-kommandot
-                fps.executeUpdate();
-
+                if (fps != null) {
+                    fps.close();
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
-                System.out.println(ex.getMessage());
-            } finally { // Stänger ps och connection för att undvika memory leakage
-                try {
-                    if (con != null) {
-                        con.close();
-                    }
-                    if (fps != null) {
-                        fps.close();
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
         }
 
+    }
+
+    public int hamtaAnslagID(String AInnehall) {
+        int anslagID = 0;
+        try {
+            this.con = DriverManager.getConnection(connectionURL);
+            ps = con.prepareStatement(hamtaAnslagID);
+            ps.setString(1, AInnehall);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                anslagID = rs.getInt("AnslagID");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } finally { // stänger ps och connection för att undvika memory leakage
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        System.out.println("anslagID: " + anslagID);
+        return anslagID;
     }
 
     /*
@@ -224,8 +271,11 @@ public class DataAccess {
      *
      * Returnerar fil
      */
-    public File hamtaFil(int anslagID) {
 
+    // måste hämta anslagid beroende på vilken fil man klickar på
+
+    public File hamtaFil(int anslagID) {
+        System.out.println(anslagID);
         // Skapa ny fil för att skriva i
         File file = null;
 
@@ -340,7 +390,7 @@ public class DataAccess {
         Statement st = con.createStatement();
 
         ResultSet bloggVärdenTabell = st
-                .executeQuery("Select top 5 * from " + tabellNamn + " order by " + sorteraEfter + " desc");
+                .executeQuery("Select top 5 * from " + tabellNamn + " order by " + sorteraEfter + " asc");
 
         ArrayList<String> bloggVärden = new ArrayList();
 
@@ -454,25 +504,26 @@ public class DataAccess {
 
     public void skapaBloggInlägg(String rubrik, String inläggInnehåll, String kategori)
             throws ClassNotFoundException, SQLException {
-        System.out.println("kategori"+kategori);
+        System.out.println("kategori" + kategori);
         int kategoriID = 0;
         boolean succé = false;
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         this.con = DriverManager.getConnection(connectionURL);
         Statement st = con.createStatement();
 
-        ResultSet valdKategoriTabell = st.executeQuery("Select top 1 KategoriID from kategori where kategorinamn ='" + kategori + "'");
+        ResultSet valdKategoriTabell = st
+                .executeQuery("Select top 1 KategoriID from kategori where kategorinamn ='" + kategori + "'");
         ArrayList<Integer> valdKategoriID = new ArrayList<Integer>();
 
         while (valdKategoriTabell.next()) {
 
             kategoriID = valdKategoriTabell.getInt(1);
         }
-        System.out.println("kategori id"+ kategoriID);
+        System.out.println("kategori id" + kategoriID);
         if (kategoriID != 0) {
 
-            st.execute("insert into Blogginlägg (Rubrik, BInnehåll, Kategori) Values ('" + rubrik + "','" + inläggInnehåll + "', "
-                    + kategoriID + ")");
+            st.execute("insert into Blogginlägg (Rubrik, BInnehåll, Kategori) Values ('" + rubrik + "','"
+                    + inläggInnehåll + "', " + kategoriID + ")");
             System.out.println("Blogginlägget sparades med kategori : " + kategoriID);
         }
 
@@ -485,6 +536,7 @@ public class DataAccess {
             throws ClassNotFoundException, SQLException {
 
         try {
+            this.con = DriverManager.getConnection(connectionURL);
             ps = con.prepareStatement(insertMote);
 
             ps.setString(1, tid);
@@ -514,6 +566,7 @@ public class DataAccess {
 
     public void deleteMote(String motesledare) throws ClassNotFoundException, SQLException {
         try {
+            this.con = DriverManager.getConnection(connectionURL);
             ps = con.prepareStatement(tabortMote);
 
             ps.setString(1, motesledare);
@@ -535,6 +588,130 @@ public class DataAccess {
             }
         }
 
+    }
+
+    public TableModel visaForskning() {
+        String n = "", e = "";
+        Map<Object, Object> anslag = new HashMap<>();
+
+        DefaultTableModel model = null;
+
+        try {
+            this.con = DriverManager.getConnection(connectionURL);
+            ps = con.prepareStatement(hamtaForskning);
+            ResultSet rs = ps.executeQuery();
+
+            ResultSetMetaData metaData = rs.getMetaData();
+
+            // names of columns
+            Vector<String> columnNames = new Vector<String>();
+            int columnCount = metaData.getColumnCount();
+            for (int column = 1; column <= columnCount; column++) {
+                columnNames.add(metaData.getColumnName(column));
+            }
+
+            // data of the table
+            Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+            while (rs.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                    vector.add(rs.getObject(columnIndex));
+                }
+                data.add(vector);
+            }
+            model = new DefaultTableModel(data, columnNames);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } finally { // stänger ps och connection för att undvika memory leakage
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return model;
+
+    }
+
+    public TableModel visaUtbildning() {
+        String n = "", e = "";
+        Map<Object, Object> anslag = new HashMap<>();
+
+        DefaultTableModel model = null;
+
+        try {
+            this.con = DriverManager.getConnection(connectionURL);
+            ps = con.prepareStatement(hamtaUtbildning);
+            ResultSet rs = ps.executeQuery();
+
+            ResultSetMetaData metaData = rs.getMetaData();
+
+            // names of columns
+            Vector<String> columnNames = new Vector<String>();
+            int columnCount = metaData.getColumnCount();
+            for (int column = 1; column <= columnCount; column++) {
+                columnNames.add(metaData.getColumnName(column));
+            }
+
+            // data of the table
+            Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+            while (rs.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                    vector.add(rs.getObject(columnIndex));
+                }
+                data.add(vector);
+            }
+            model = new DefaultTableModel(data, columnNames);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } finally { // stänger ps och connection för att undvika memory leakage
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return model;
+
+    }
+
+    public ArrayList<String> hamtaMote() throws ClassNotFoundException, SQLException {
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        this.con = DriverManager.getConnection(connectionURL);
+        Statement st = con.createStatement();
+
+        ResultSet mötetabell = st.executeQuery("select MötesID, Tid, Datum, Mötesledare, Deltagare FROM Möte");
+        ArrayList<String> möte = new ArrayList<>();
+
+        while (mötetabell.next()) {
+            int MötesID = mötetabell.getInt("MötesID");
+            String Tid = mötetabell.getString("Tid");
+            String Datum = mötetabell.getString("Datum");
+            int Mötesledare = mötetabell.getInt("Mötesledare");
+            int Deltagare = mötetabell.getInt("Deltagare");
+            möte.add(Integer.toString(MötesID) + "            " + Tid.substring(0, 5) + "           " + Datum
+                    + "              " + Integer.toString(Mötesledare) + "                 "
+                    + Integer.toString(Deltagare));
+            System.out.println(Integer.toString(MötesID) + ", " + Tid + ", " + Datum + ", "
+                    + Integer.toString(Mötesledare) + ", " + Integer.toString(Deltagare) + ";");
+        }
+
+        return möte;
     }
 
 }
